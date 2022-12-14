@@ -1,30 +1,34 @@
-require('dotenv').config();
-require('./mongo');
+require("dotenv").config();
+require("./mongo");
 
 const express = require("express");
-const cors = require('cors')
+const path = require("path");
+const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
 const app = express();
 const router = require("./routes");
 
 app.use(express.json());
-app.use(cors({
-  origin: '*',
-  methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
-}));
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
+  })
+);
 
+app.use(express.static(path.join(__dirname, "public")));
 
 const swaggerDocument = require("./swagger.json");
 app.use(
-  '/swagger',
-  swaggerUi.serve, 
+  "/swagger",
+  express.static("node_modules/swagger-ui-dist/", { index: false }),
+  swaggerUi.serve,
   swaggerUi.setup(swaggerDocument)
 );
 
-app.use('/', router);
+app.use("/", router);
 
-const PORT = process.env.PORT || 3100
-
+const PORT = process.env.PORT || 3100;
 
 app.listen(PORT, () => {
   console.log(`Server is running at port ${PORT}`);
