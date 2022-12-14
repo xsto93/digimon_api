@@ -29,7 +29,23 @@
           {
             "name": "limit",
             "in": "query",
+            "default": 50,
             "description": "limit of the results"
+          },
+          {
+            "name": "color",
+            "in": "query",
+            "description": "color of the card"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "type of the card"
+          },
+          {
+            "name": "set_name",
+            "in": "query",
+            "description": "set_name of the card"
           }
         ],
         "responses": {
@@ -51,6 +67,27 @@
             "name": "cardnumber",
             "in": "path",
             "description": "number of card"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Card"
+            }
+          }
+        }
+      }
+    },
+    "/api/card/{idCard}": {
+      "get": {
+        "tags": ["Cards"],
+        "summary": "Get a card of Mongo",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of card"
           }
         ],
         "responses": {
