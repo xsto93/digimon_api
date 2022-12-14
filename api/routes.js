@@ -3,14 +3,18 @@ const { default: mongoose } = require("mongoose");
 const digimon = require("./mock/digimon.json");
 const notFound = require("./middlewares/notFound");
 const error = require("./middlewares/error");
+const getParams = require("./helpers/cardHelpers");
 let CardModel = require("./model/model");
 
 const router = express.Router();
 
+
 router.get("/api/cards", async (request, response, next) => {
-  const { limit } = request.query;
+  const { limit, color, cardnumber, type, set_name} = request.query;
+  const query = getParams(color, cardnumber, type, set_name);
+  
   try {
-    const cards = await CardModel.find({}).limit(limit || 50);
+    const cards = await CardModel.find(query).limit(limit || 50);
     response.json(cards);
   } catch (error) {
     next(error);
@@ -21,6 +25,17 @@ router.get("/api/card/:cardnumber", async (request, response, next) => {
   try {
     const { cardnumber } = request.params;
     const card = await CardModel.findOne({ cardnumber: cardnumber });
+    if (card) response.json(card);
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/api/card/:id", async (request, response, next) => {
+  try {
+    const { id } = request.params;
+    const card = await CardModel.findOne({ _id: id });
     if (card) response.json(card);
     next();
   } catch (error) {
@@ -83,10 +98,9 @@ router.post("/api/add_all_cards", async (_request, response, next) => {
 });
 
 router.delete("/api/delete_all", async (_request, response, next) => {
-  console.log("entra en delete all");
-
   try {
-    CardModel.deleteMany();
+    const res = CardModel.deleteMany({});
+    
     response.status(204).end();
   } catch (error) {
     next(error);
